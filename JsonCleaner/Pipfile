@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+futures = "*"
+pyspark = "==3.0.1"
+pyarrow = "*"
+pandas = "*"
+pep8 = "*"
+nose = "*"
+coverage = "*"
+jsoncomment = "*"
+azure-datalake-store = "*"
+setuptools = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3"
