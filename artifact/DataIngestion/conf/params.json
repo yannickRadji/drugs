@@ -1,0 +1,27 @@
+{
+  "csv": [
+    "clinical_trials",
+    "drugs",
+    "pubmed"
+  ],
+  "json": [
+    "pubmed"
+  ],
+  "deduplication rules": {
+    "clinical_trials": [
+      "date",
+      "scientific_title"
+    ],
+    "pubmed": [
+      "title",
+      "date"
+    ]
+  },
+  "merge sanitized rules": {
+    "clinical_trials": "new.id = old.id AND new.date = old.date",
+    "pubmed": "new.id = old.id AND new.date = old.date",
+    "drugs": "new.drug = old.drug"
+  },
+  "to words": {"clinical_trials":  "scientific_title", "pubmed": "title"},
+  "names": {"journal":  "journal", "drug":  "drug", "graph_filename":  ["result", "graph.json"], "drugs":  "drugs", "clinical_trials":  "clinical_trials", "pubmed":  "pubmed", "id": "id", "date":  "date"}
+}

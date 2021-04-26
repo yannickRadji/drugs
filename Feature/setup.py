@@ -14,5 +14,5 @@ setup(
 
     author="Yannick Radji",
 
-    packages=["feature"],
+    packages=["feature", "entities", "utils"],
 )

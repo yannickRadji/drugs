@@ -1,0 +1,36 @@
+trigger:
+  - development
+  - main
+
+pool:
+  name: ubuntu-latest
+
+variables:
+  python.version: '3.7'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(python.version)'
+  displayName: 'Use Python $(python.version)'
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install mkdocs-material
+  displayName: 'Install dependencies'
+
+- script: |
+    mkdocs build
+  workingDirectory: $(System.DefaultWorkingDirectory)\product
+  displayName: 'Build Product Site'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)\product\site'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'

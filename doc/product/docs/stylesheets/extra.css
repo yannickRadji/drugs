@@ -1,0 +1,8 @@
+/* Sodexo color palette - https://color.adobe.com/fr/Sodexo-RGB-color-theme-3130380/ */
+:root {
+    --md-primary-fg-color:        #2A295C;
+    --md-primary-fg-color--light: #283897;
+  }
+.md-footer {
+  --md-footer-bg-color:  #65676A;
+}

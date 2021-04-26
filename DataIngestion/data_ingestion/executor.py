@@ -51,8 +51,8 @@ class Executor(BaseExecute, Execute):
 
         df_dict = Files.read_delta(self.logger, set(self.params.get("csv") + self.params.get("json")),
                                    path.join(output_path, "sanitized"), self.spark)
+        Sanitizer.deduplication(self.logger, df_dict, self.params.get("deduplication rules"))
 
-        # filtrer les journaux null car inutile pour la prochaine étape mais les garder en bronze en cas de nouvelle données permettant l'update; idem pour les drugs sans drug
         DrugsExtractor.to_words(self.logger, df_dict, self.params.get("to words"))
 
         drug_df_name = self.params.get("names").get("drugs")
@@ -60,15 +60,15 @@ class Executor(BaseExecute, Execute):
 
         df_dict[drug_df_name] = df_dict.get(drug_df_name).withColumn(drug_col_name, lower(col(drug_col_name))).filter(
             col(drug_col_name).isNotNull())
-        # don't work in case of really large drug no just because of collect to driver but also column creation
+        # To be refactor as it don't work in case of really large drug list because of collect to driver (below) and column creation (above)
         # need to drop duplicate because several drugs can have different atc code
         drugs_list = df_dict.get(drug_df_name).select(drug_col_name).drop_duplicates().toPandas()[
             drug_col_name].to_list()
         df_dict.pop(drug_df_name)
-        # cache is car les prochaines opérations sont compute intensive
+
         for df in df_dict.values():
             df.cache()
-        self.logger.info("Prepared drug list and cached dataframes: {}".format(df_dict))
+        self.logger.info("Prepared drug list and cached dataframes for following intensive computation: {}".format(df_dict))
 
         DrugsExtractor.pivot(self.logger, drugs_list, df_dict)
 

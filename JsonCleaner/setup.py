@@ -14,5 +14,5 @@ setup(
 
     author="Yannick Radji",
 
-    packages=["json_cleaner"],
+    packages=["json_cleaner", "entities", "utils"],
 )

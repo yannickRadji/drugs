@@ -9,6 +9,13 @@ from pyspark.sql.functions import regexp_replace, col, when, to_date, first
 class Sanitizer:
     @staticmethod
     def deduplication(logger, df_dict: Dict[str, DataFrame], rules: Dict[str, List[str]]):
+        """
+        Deduplicate lines considering few columns and merge data from those duplicate
+        :param logger:
+        :param df_dict:
+        :param rules:
+        :return:
+        """
         try:
             for df_name, columns in rules.items():
                 df_dict[df_name] = df_dict.get(df_name).groupBy(*columns) \
@@ -22,7 +29,7 @@ class Sanitizer:
     @staticmethod
     def empty_str_cleaning(logger, df_dict: Dict[str, DataFrame], regex: str = r"^\s+$") -> Dict[str, DataFrame]:
         """
-
+        Cleaning the empty string in the whole dataframe by setting them a null/none cell
         :param logger:
         :param df_dict:
         :param regex:
@@ -44,7 +51,7 @@ class Sanitizer:
     @staticmethod
     def clean_date(logger, df_dict: Dict[str, DataFrame], date: str = "date") -> Dict[str, DataFrame]:
         """
-
+        Casting to date the string date that have the following format dd/MM/yyyy, yyyy-MM-dd, d MMMM yyyy
         :param logger:
         :param df_dict:
         :param date:
@@ -71,9 +78,9 @@ class Sanitizer:
     def read_files(logger, spark, params_json: Dict[str, Any], input_path: str, encoding: str = "UTF-8") -> Dict[
         str, DataFrame]:
         """
-        Read json & csv files based on schema & filename specified in the JSON. Union files with same names & columns
+        Read json & csv files based on schema & filename specified in the JSON with the correct encoding. Union files with same names & columns.
         To stay easily readable we choose to leave keep it simple but this could be more parametrized
-        if more supported files option are needed in the future.
+        if more supported files option are needed in the future. Data is read as string to enable correct parsing before type casting.
         :param spark:
         :param logger:
         :param encoding:

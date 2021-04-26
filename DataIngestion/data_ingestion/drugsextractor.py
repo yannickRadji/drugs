@@ -24,6 +24,14 @@ class DrugsExtractor:
 
     @staticmethod
     def to_words(logger, df_dict: Dict[str, DataFrame], params: Dict[str, str]):
+        """
+        We create a words list from the string/sentences (the empty string are discarded) by tokenizing & removing stop
+        words.
+        :param logger:
+        :param df_dict:
+        :param params:
+        :return:
+        """
         for df_name, col_name in params.items():
             df_dict[df_name] = df_dict.get(df_name).filter(col(col_name).isNotNull())
             df_dict[df_name] = DrugsExtractor.df_to_words(logger, df_dict.get(df_name), col_name).drop(col_name)
@@ -31,12 +39,12 @@ class DrugsExtractor:
     @staticmethod
     def pivot(logger, drugs_list: List[str], df_dict: Dict[str, DataFrame], words_col: str = "words"):
         """
-
+        Create a new column by drug and set True if the drug is contain in the list of words in each row
         :param logger:
         :param drugs_list:
         :param df_dict:
         :param words_col:
-        :return: with word column added
+        :return: Nothing update the dictionary in-place
         """
         try:
             for drug_name in drugs_list:
@@ -50,6 +58,17 @@ class DrugsExtractor:
     @staticmethod
     def shift(logger, drugs_list: List[str], df_dict: Dict[str, DataFrame], drug_col_name: str, spark: SparkSession,
               columns_kept: List[str]) -> Dict[str, DataFrame]:
+        """
+        From pivoted data (see dedicated method) shift the drug's name column to one column,
+        we'll have a line per publication/drug
+        :param logger:
+        :param drugs_list:
+        :param df_dict:
+        :param drug_col_name:
+        :param spark:
+        :param columns_kept:
+        :return:
+        """
         try:
             res_dict = {
                 name: spark.createDataFrame([], df.select(*columns_kept).withColumn(drug_col_name, lit("0")).schema) for

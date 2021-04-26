@@ -25,19 +25,20 @@ class Executor(BaseExecute, Execute):
 
         return args_dict
 
-    def execute(self, conf_path: str, input_path: str, output_path: str, on_adls: bool) -> None:
+    def execute(self, conf_path: str, input_path: str, output_path: str, on_adls: bool):
         """
-        Clean the list of json file gave through the params.json (create new data file)
+        Clean the list of JSON files by creating new files
         :param on_adls: Do the data are on the Data Lake
         :param output_path: Folder path to write files
         :param input_path: Folder path to read raw files
         :param conf_path: File path of the params.json
-        :return: Nothing
+        :return: The read data
         """
         self.load_params(conf_path)
         self.params.get("json")
         self.data_lake = uts.connect_to_data_lake_store(self.params) if on_adls else None
 
+        res = []
         for file in self.params.get("json"):
             json_file_name = "{}.json".format(file)
             read_path = path.join(input_path, json_file_name)
@@ -47,3 +48,6 @@ class Executor(BaseExecute, Execute):
             write_path = path.join(output_path, json_file_name)
             self.logger.info("Writing the parsed JSON to: {}".format(write_path))
             uts.write_json(data, write_path, self.data_lake)
+            res.append(data)
+
+        return res

@@ -14,5 +14,5 @@ setup(
 
     author="Yannick Radji",
 
-    packages=["data_ingestion"],
+    packages=["data_ingestion", "entities", "utils"],
 )

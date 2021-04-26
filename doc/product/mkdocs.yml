@@ -1,0 +1,22 @@
+site_name: Drug
+site_description: Drugs project
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+theme:
+  language: en
+  name: material
+  logo: assets/icons/businessAnalyst.png
+  logo_top: assets/images/capsules.png
+  custom_dir: overrides
+
+nav:
+- Data Engineering: index.md
+- SQL: sql.md
+
+extra_css:
+  - stylesheets/extra.css
