@@ -1,5 +1,6 @@
 import argparse
 from os import path
+from typing import List
 
 from pyspark.sql.functions import col, explode, count, max
 
@@ -24,12 +25,16 @@ class Executor(BaseExecute, Execute):
 
         return args_dict
 
-    def execute(self, conf_path: str, input_path: str):
+    def execute(self, conf_path: str, input_path: str) -> List[str]:
         """
         Get the list of journals that have the most distinct drugs
-        :param input_path: Folder path to read raw files
-        :param conf_path: File path of the params.json
-        :return: The result list
+
+        Args:
+            conf_path: Folder path to read raw files
+            input_path: File path of the params.json
+
+        Returns: The result list
+
         """
         self.load_params(conf_path)
         graph_filename = self.params.get("names").get("graph_filename")

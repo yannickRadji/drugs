@@ -11,10 +11,13 @@ class Sanitizer:
     def deduplication(logger, df_dict: Dict[str, DataFrame], rules: Dict[str, List[str]]):
         """
         Deduplicate lines considering few columns and merge data from those duplicate
-        :param logger:
-        :param df_dict:
-        :param rules:
-        :return:
+        Args:
+            logger: Logger instance used to log events
+            df_dict: Dictionary of the datasets with the structure {Name: Dataframe}
+            rules: {Dataset Name: [column1, column2]
+
+        Returns: Dic updated in place
+
         """
         try:
             for df_name, columns in rules.items():
@@ -30,10 +33,13 @@ class Sanitizer:
     def empty_str_cleaning(logger, df_dict: Dict[str, DataFrame], regex: str = r"^\s+$") -> Dict[str, DataFrame]:
         """
         Cleaning the empty string in the whole dataframe by setting them a null/none cell
-        :param logger:
-        :param df_dict:
-        :param regex:
-        :return:
+        Args:
+            logger: Logger instance used to log events
+            df_dict: Dictionary of the datasets with the structure {Name: Dataframe}
+            regex: The regex pattern
+
+        Returns: An new dataset dict
+
         """
         try:
             res_dict = {}
@@ -52,10 +58,13 @@ class Sanitizer:
     def clean_date(logger, df_dict: Dict[str, DataFrame], date: str = "date") -> Dict[str, DataFrame]:
         """
         Casting to date the string date that have the following format dd/MM/yyyy, yyyy-MM-dd, d MMMM yyyy
-        :param logger:
-        :param df_dict:
-        :param date:
-        :return:
+        Args:
+            logger: Logger instance used to log events
+            df_dict: Dictionary of the datasets with the structure {Name: Dataframe}
+            date: Name of the date column
+
+        Returns: An new dataset dict
+
         """
         try:
             null_before = [df.filter(col(date).isNull()).count() for df in df_dict.values() if date in df.columns]
@@ -81,12 +90,15 @@ class Sanitizer:
         Read json & csv files based on schema & filename specified in the JSON with the correct encoding. Union files with same names & columns.
         To stay easily readable we choose to leave keep it simple but this could be more parametrized
         if more supported files option are needed in the future. Data is read as string to enable correct parsing before type casting.
-        :param spark:
-        :param logger:
-        :param encoding:
-        :param params_json:
-        :param input_path:
-        :return:
+        Args:
+            logger: Logger instance used to log events
+            spark: Spark instance
+            params_json: {"csv" : [filename1, filename2], "json": [filename3]}
+            input_path: Data folder path
+            encoding: Needed encoding to read the data
+
+        Returns: A dict with name: DataFrame
+
         """
         try:
             csv_filenames = params_json.get('csv')
@@ -107,10 +119,13 @@ class Sanitizer:
     def clean_strings(logger, df_dict: Dict[str, DataFrame], regex_literal_utf: str = r"(\\x.{2})+"):
         """
         Clean Dataframes strings by dropping anything that match the regex
-        :param logger:
-        :param df_dict:
-        :param regex_literal_utf:
-        :return:
+        Args:
+            logger: Logger instance used to log events
+            df_dict: Dictionary of the datasets with the structure {Name: Dataframe}
+            regex_literal_utf: The regex pattern
+
+        Returns: Modification in place
+
         """
         try:
             for df_name in df_dict.keys():

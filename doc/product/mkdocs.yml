@@ -14,9 +14,36 @@ theme:
   logo_top: assets/images/capsules.png
   custom_dir: overrides
 
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          setup_commands:
+            - import sys
+            - sys.path.append("../../DataIngestion")
+            - from unittest.mock import MagicMock as mock
+            - sys.modules["numpy"] = mock()
+            - sys.path.append("../../Feature")
+            - sys.path.append("../../Entities")
+            - sys.path.append("../../Utils")
+            - sys.path.append("../../JsonCleaner")
+
 nav:
 - Data Engineering: index.md
 - SQL: sql.md
+- Data Ingestion:
+    - Files: files.md
+    - Drugs Extractor: drugsextractor.md
+    - Executor: data_ingestion.md
+    - Sanitizer: sanitizer.md
+- Feature:
+    - Executor: feature.md
+- Json Cleaner:
+    - Executor: json_cleaner.md
+- Entities:
+    - Base Execute: base_execute.md
+    - Abstract: abstract.md
 
 extra_css:
   - stylesheets/extra.css

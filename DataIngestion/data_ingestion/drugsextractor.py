@@ -11,6 +11,20 @@ class DrugsExtractor:
     def df_to_words(logger, df: DataFrame, input_col: str, output_col: str = "words", pattern: str = "\\W+",
                     to_lowercase: bool = True,
                     case_sensitive: bool = False) -> DataFrame:
+        """
+        Take each string in a column and parse it to a list of words via Tokenization and remove stop words.
+        Args:
+            logger: Logger instance used to log events
+            df: Dataframe used
+            input_col: Selected input column name
+            output_col: Output column name
+            pattern: The regex pattern used to tokenized
+            to_lowercase: If all the word should be trim
+            case_sensitive: Does the stop words should be case sensitive
+
+        Returns: The modified dataframe
+
+        """
         try:
             intermediate_output = output_col + "intermediate"
             regex_tokenizer = RegexTokenizer(inputCol=input_col, outputCol=intermediate_output, pattern=pattern,
@@ -27,24 +41,30 @@ class DrugsExtractor:
         """
         We create a words list from the string/sentences (the empty string are discarded) by tokenizing & removing stop
         words.
-        :param logger:
-        :param df_dict:
-        :param params:
-        :return:
+        Args:
+            logger: Logger instance used to log events
+            df_dict: Dictionary of the datasets with the structure {Name: Dataframe}
+            params:
+
+        Returns: Nothing update the dictionary in-place
+
         """
         for df_name, col_name in params.items():
             df_dict[df_name] = df_dict.get(df_name).filter(col(col_name).isNotNull())
             df_dict[df_name] = DrugsExtractor.df_to_words(logger, df_dict.get(df_name), col_name).drop(col_name)
 
     @staticmethod
-    def pivot(logger, drugs_list: List[str], df_dict: Dict[str, DataFrame], words_col: str = "words"):
+    def pivot(logger, drugs_list: List[str], df_dict: Dict[str, DataFrame], words_col: str = "words") -> None:
         """
         Create a new column by drug and set True if the drug is contain in the list of words in each row
-        :param logger:
-        :param drugs_list:
-        :param df_dict:
-        :param words_col:
-        :return: Nothing update the dictionary in-place
+        Args:
+            logger: Logger instance used to log events
+            drugs_list:
+            df_dict: Dictionary of the datasets with the structure {Name: Dataframe}
+            words_col:
+
+        Returns: Nothing update the dictionary in-place
+
         """
         try:
             for drug_name in drugs_list:
@@ -61,13 +81,16 @@ class DrugsExtractor:
         """
         From pivoted data (see dedicated method) shift the drug's name column to one column,
         we'll have a line per publication/drug
-        :param logger:
-        :param drugs_list:
-        :param df_dict:
-        :param drug_col_name:
-        :param spark:
-        :param columns_kept:
-        :return:
+        Args:
+            logger: Logger instance used to log events
+            drugs_list: The list of drugs to shift
+            df_dict: Dictionary of the datasets with the structure {Name: Dataframe}
+            drug_col_name: The name that will have the added column
+            spark: Spark instance
+            columns_kept: The list of columns to keep at the end of the process
+
+        Returns: A new modified datasets' dictionary
+
         """
         try:
             res_dict = {

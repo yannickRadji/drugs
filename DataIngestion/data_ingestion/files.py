@@ -9,13 +9,16 @@ class Files:
     @staticmethod
     def merge_write(logger, df_dict: Dict[str, DataFrame], rules: Dict[str, str], output_path: str, spark: SparkSession):
         """
-        Csx
-        :param spark:
-        :param output_path:
-        :param rules:
-        :param logger:
-        :param df_dict:
-        :return:
+        Write data if the dataset doesn't exist or merge it to the existing dataset
+        Args:
+            logger: Logger instance used to log events
+            df_dict: Dictionary of the datasets with the structure {Name: Dataframe}
+            rules: Matching rules use to merge
+            output_path: Path to write the data
+            spark: Spark instance
+
+        Returns:
+
         """
         try:
             from delta.tables import DeltaTable
@@ -37,12 +40,15 @@ class Files:
     @staticmethod
     def read_delta(logger, files_names: Set[str], files_path: str, spark: SparkSession) -> Dict[str, DataFrame]:
         """
-        sss
-        :param spark:
-        :param files_path:
-        :param files_names:
-        :param logger:
-        :return:
+        Create a dictionary of the datasets by reading data
+        Args:
+            logger: Logger instance used to log events
+            files_names: Datasets names
+            files_path: path of the data
+            spark:  Spark instance
+
+        Returns: Dict with the structure {Name: Dataframe}
+
         """
         try:
             logger.info("Reading dataframes {0} from {1} folder".format(files_names, files_path))

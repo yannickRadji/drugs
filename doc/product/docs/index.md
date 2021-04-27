@@ -1,6 +1,8 @@
-# Data Engineering
+# Data Engineering & SQL
 
-Spark application building relations between drugs, scientific publications, pubmed, journals and clinical trials.
+This page deal about the data engineering project consisting of a Spark & Python application building relations between drugs, scientific publications, pubmed, journals and clinical trials.
+
+For SQL queries part you'll find more details in the [dedicated page](/sql).
 
 ----
 
@@ -17,6 +19,9 @@ The 3 "business" packages should be used with a DAG orchestrator (like Azure Dat
 All packages are idempotent & parameterizable.
 
 ![Archi!](/assets/images/pipeline_archi.png)
+
+utils & entities are internally published Python packages.
+The environment & dependencies mismatch are prevent by pipenv & docker.
 
 As the JSON file management json_cleaner is done in pure Python to ease its re-usability and enable its usage
 in parallel on several files it has been separated from the main Spark data_ingestion package.
@@ -44,25 +49,39 @@ In case of large JSON input for json_cleaner we should leverage an iterative JSO
 
 In real world we should set up a whole DevOps approach with branching strategy, CI, CD, full dockerized environment & quality gates.
 
-utils & entities should be published Python packages. We should have secure vault for credentials & proper cloud/software monitoring.
+We should have secure vault for credentials & proper cloud/software monitoring.
 
 In real world drugs have lots of synonyms with sometimes composed name, 
 we should create a drugs reference dataset that could source himself via API to drugs database (like Drugbank) 
 
 To be robust on matching drugs and scalable a search engine like elastic search could be leverage on drugs search in publication.
 
-The artifact folder shouldn't exist as the packages shouldn't be version, it exists only to ease the usage as I wasn't able to provide Docker images from my registry.
+The artifact folder shouldn't exist as the packages shouldn't be version, it exists only to ease the usage if you can't pull Docker images from my registry.
+```shell
+docker pull yannick.azurecr.io/drugs/full:latest
+```
 
 ## Results
 
 The orchestrator is able to run the pipeline with provided parameters.
 Note that DataBricks file system need to have a mounted workspace on your data lake.
+Unfortunately Azure Data Factory doesn't support yet dockerized activity for Databricks but Function does.
 
 ![Drugs!](/assets/images/adf_dbs.png)
 
 The json_cleaner get rid of the trailing comma in the sample data.
 
-Sanitizer well sanitize all the hitches as we can see on the clinical_trial.
+Sanitizer well sanitize all the hitches as we can see on the clinical_trial. 
+Note the: 
+
+- empty string,
+  
+- non-consistent date format
+
+- duplicated data with null
+
+- encoding leftover
+
 Before:
 ![sanitizingBefore!](/assets/images/sanitizingBefore.png)
 After:
@@ -74,3 +93,18 @@ Drugsextractor is able to get all drugs (still an example on clinical_trial):
 Thanks to the feature package we know that at the most 2 drugs are mentioned in the following journal:
 
 ![Result!](/assets/images/end_result.png)
+
+You can launch unit test with nosetests for example on feature:
+```shell
+nosetests test/test_feature.py
+```
+![Result!](/assets/images/test.png)
+
+To launch locally Spark job use spark-submit for example:
+```shell
+spark-submit --master local --py-files dist/feature-1.0.0-py3.7.egg feature/main.py "/path_to_params.json/" "/input_path"
+```
+
+## Code reference
+
+In the navigation (on your left side) you'll find a section per package that provide the underlying code references.

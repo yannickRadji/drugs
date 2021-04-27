@@ -9,6 +9,12 @@ class BaseExecute:
     Base class for any Python Application to have consistency across them
     """
     def __init__(self, spark_session=None, spark_app: bool = True):
+        """
+        Initialize the application
+        Args:
+            spark_session: A spark instance if it is already existing like on DataBricks that provider their custom
+            spark_app: If the application uses Spark
+        """
         try:
             # Instantiate logger
             self.logger = uts.create_logger_basic()
@@ -45,8 +51,11 @@ class BaseExecute:
         """
         Retrieve the parameters file and store it in the class attributes.
         We arbitrary set that it should call params.json
-        :param conf_path: path of the params.json
-        :return: Nothing
+        Args:
+            conf_path:  path of the params.json
+
+        Returns: Nothing the dict is stored in an attribute
+
         """
         try:
             # Parameters

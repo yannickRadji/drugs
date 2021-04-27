@@ -27,12 +27,15 @@ class Executor(BaseExecute, Execute):
 
     def execute(self, conf_path: str, input_path: str, output_path: str, on_adls: bool):
         """
-        Clean the list of JSON files by creating new files
-        :param on_adls: Do the data are on the Data Lake
-        :param output_path: Folder path to write files
-        :param input_path: Folder path to read raw files
-        :param conf_path: File path of the params.json
-        :return: The read data
+        Clean a list of JSON files and writing them
+        Args:
+            conf_path: File path of the params.json
+            input_path: Folder path to read raw files
+            output_path: Folder path to write files
+            on_adls: If the data are on the Azure Data Lake set true to use the correct package
+
+        Returns: Nothing the data are directly write at the desired location
+
         """
         self.load_params(conf_path)
         self.params.get("json")

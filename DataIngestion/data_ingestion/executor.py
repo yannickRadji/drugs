@@ -32,13 +32,18 @@ class Executor(BaseExecute, Execute):
 
     def execute(self, conf_path: str, input_path: str, output_path: str, on_dbfs: bool) -> None:
         """
-        Pipeline that sanitize data, extract drugs and change the data model finally save to a JSON
-        :param on_dbfs: If DataBricks Filesystem is mounted
-        :param output_path: Folder path to write files
-        :param input_path: Folder path to read raw files
-        :param conf_path: File path of the params.json
-        :return: Nothing
+        Pipeline that sanitize data, extract drugs and change the data model finally save to a JSON.
+        This is the main entrypoint of the package. The parameters are the job's arguments.
+        Args:
+            conf_path: If DataBricks Filesystem is mounted
+            input_path: Folder path to write files
+            output_path: Folder path to read raw files
+            on_dbfs: File path of the params.json
+
+        Returns: Nothing only modify inplace the instanced class
+
         """
+
         self.load_params(conf_path)
 
         df_dict = Sanitizer.read_files(self.logger, self.spark, self.params, input_path)
