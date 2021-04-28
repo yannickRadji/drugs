@@ -2,7 +2,7 @@ import argparse
 from os import path
 
 from pyspark.sql.functions import col, lower, struct, collect_set, collect_list, lit, array_distinct, concat
-from pyspark.sql.types import StringType, ArrayType
+from pyspark.sql.types import StringType, ArrayType, StructType, StructField
 
 from data_ingestion.sanitizer import Sanitizer
 from data_ingestion.files import Files
@@ -85,6 +85,7 @@ class Executor(BaseExecute, Execute):
 
         # Construct publication objects and journal object
         for df_name in self.params.get("to words").keys():
+            df_dict[df_name] = df_dict.get(df_name).withColumn(date, col(date).cast(StringType()))
             df_dict[df_name] = df_dict.get(df_name).withColumn(id_col, struct(col(date).alias(date), col(id_col).alias(id_col))) \
                 .withColumn(journal, struct(col(date).alias(date), col(journal).alias(journal)))
         self.logger.info("Publication objects and journal object constructed: {}".format(df_dict))
@@ -92,9 +93,11 @@ class Executor(BaseExecute, Execute):
         trial = self.params.get("names").get("clinical_trials")
         pubmed = self.params.get("names").get("pubmed")
         # Get of each drug a the list of journal and publication (we use set on journal to avoid duplicates)
-        merge_trial_df = df_dict.get(trial).groupby(drug_col_name)\
+        merge_trial_df = \
+            df_dict.get(trial).groupby(drug_col_name)\
             .agg(collect_set(col(journal)).alias(journal), collect_list(col(id_col)).alias(trial))\
-            .withColumn(pubmed, lit(None).cast(ArrayType(StringType())))
+            .withColumn(pubmed, lit(None)
+                        .cast(ArrayType(StructType([StructField('date', StringType(), True), StructField('id', StringType(), True)]))))
         self.logger.info("Created publication per drug for trials: {}".format(merge_trial_df))
         merge_pub_df = df_dict.get(pubmed).groupby(drug_col_name).agg(collect_set(col(journal)).alias(journal),
                                                                       collect_list(col(id_col)).alias(pubmed))
@@ -138,4 +141,3 @@ class Executor(BaseExecute, Execute):
         graph_path = path.join(output_path, *graph_filename)
         self.logger.info("Writing the resulting JSON to: {}".format(graph_path))
         json_df.repartition(1).write.mode("overwrite").json(graph_path)
-        json_df.show(truncate=100)

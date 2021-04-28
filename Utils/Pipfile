@@ -5,9 +5,6 @@ name = "pypi"
 
 [packages]
 futures = "*"
-pyspark = "==3.0.1"
-pyarrow = "*"
-pandas = "*"
 pep8 = "*"
 nose = "*"
 coverage = "*"

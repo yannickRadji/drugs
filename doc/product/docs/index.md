@@ -47,7 +47,7 @@ it in parquet or in a graph database.
 
 In case of large JSON input for json_cleaner we should leverage an iterative JSON parser (Python package like ijson)
 
-In real world we should set up a whole DevOps approach with branching strategy, CI, CD, full dockerized environment & quality gates.
+In real world we should set up a whole DevOps approach with branching strategy, cookiecutter , CI, CD, full dockerized environment & quality gates.
 
 We should have secure vault for credentials & proper cloud/software monitoring.
 
@@ -98,7 +98,7 @@ You can launch unit test with nosetests for example on feature:
 ```shell
 nosetests test/test_feature.py
 ```
-![Result!](/assets/images/test.png)
+![test!](/assets/images/test.png)
 
 To launch locally Spark job use spark-submit for example:
 ```shell
