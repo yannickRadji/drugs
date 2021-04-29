@@ -2,7 +2,8 @@ import argparse
 from os import path
 from typing import List
 
-from pyspark.sql.functions import col, explode, count, max
+from pyspark.sql.functions import col, explode, count, max, from_json
+from pyspark.sql.types import ArrayType, StructType, StructField, StringType
 
 from entities.abstract import Execute
 from entities.base_execute import BaseExecute
@@ -45,7 +46,9 @@ class Executor(BaseExecute, Execute):
         json_path = path.join(input_path, *graph_filename)
 
         self.logger.info("Reading JSON data from: {}".format(json_path))
-        df_graph = self.spark.read.json(json_path)
+        #TODO utiliser le string to struct et mettre la string dans params.json
+        df_graph = self.spark.read.json(json_path)\
+            .withColumn("journal", from_json(col(journal), ArrayType(StructType([StructField("date", StringType(), True), StructField("journal", StringType(), True)])))).select(drug, journal)
 
         self.logger.info("Aggregate data to have number of distinct drugs per journal")
         df_exploded = df_graph.select(col(drug), explode(col(journal)).alias(struct_col))

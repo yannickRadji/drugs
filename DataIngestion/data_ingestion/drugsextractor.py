@@ -7,6 +7,9 @@ from pyspark.sql.functions import col, array_contains, lit
 
 
 class DrugsExtractor:
+    """
+    Give abilities to parse a dataframe with Drug's word to change its data model
+    """
     @staticmethod
     def df_to_words(logger, df: DataFrame, input_col: str, output_col: str = "words", pattern: str = "\\W+",
                     to_lowercase: bool = True,

@@ -6,6 +6,9 @@ from pyspark.sql import DataFrame, SparkSession
 
 
 class Files:
+    """
+    Class that provide methods to interact with a bunch of delta tables/files
+    """
     @staticmethod
     def merge_write(logger, df_dict: Dict[str, DataFrame], rules: Dict[str, str], output_path: str, spark: SparkSession):
         """

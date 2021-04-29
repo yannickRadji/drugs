@@ -7,6 +7,9 @@ from pyspark.sql.functions import regexp_replace, col, when, to_date, first
 
 
 class Sanitizer:
+    """
+    Enable to sanitize/clean dataframes
+    """
     @staticmethod
     def deduplication(logger, df_dict: Dict[str, DataFrame], rules: Dict[str, List[str]]):
         """

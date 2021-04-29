@@ -1,7 +1,7 @@
 import argparse
 from os import path
 
-from pyspark.sql.functions import col, lower, struct, collect_set, collect_list, lit, array_distinct, concat
+from pyspark.sql.functions import col, lower, struct, collect_set, collect_list, lit, array_distinct, concat, to_json
 from pyspark.sql.types import StringType, ArrayType, StructType, StructField
 
 from data_ingestion.sanitizer import Sanitizer
@@ -131,13 +131,10 @@ class Executor(BaseExecute, Execute):
         graph_filename = self.params.get("names").get("graph_filename")
         json_df = self.spark.read.format("delta").load(delta_path)
 
-        # To write in classic JSON and not JSON lines we'll later use the code snippet below (of course in real condition there shouldn't be commented code)
         # To use the filesystem mounted on databricks with python process we need to prefix "/dbfs/" but Spark process don't work with this prefix
-        # pythonic_path = "/dbfs"+output_path if on_dbfs else output_path
-        # graph_path = path.join(pythonic_path, *graph_filename)
-        # json_df.toPandas().to_json(graph_path, orient="records", date_format="iso")
+        pythonic_path = "/dbfs"+output_path if on_dbfs else output_path
+        graph_path = path.join(pythonic_path, *graph_filename)
+        json_df.withColumn(journal, to_json(col(journal))).withColumn(trial, to_json(col(trial))).withColumn(pubmed, to_json(col(pubmed))).toPandas().to_json(graph_path, orient="records", date_format="iso")
         # when used multiLine need to be enable on the reading spark process
 
-        graph_path = path.join(output_path, *graph_filename)
-        self.logger.info("Writing the resulting JSON to: {}".format(graph_path))
-        json_df.repartition(1).write.mode("overwrite").json(graph_path)
+        self.logger.info("Wrote the resulting JSON to: {}".format(graph_path))

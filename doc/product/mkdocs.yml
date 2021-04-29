@@ -1,5 +1,7 @@
 site_name: Drug
 site_description: Drugs project
+repo_url: https://github.com/yannickRadji/drugs
+repo_name: Drug sources
 
 markdown_extensions:
   - admonition

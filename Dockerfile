@@ -11,4 +11,5 @@ RUN pip install pipenv
 RUN pipenv install
 RUN pipenv shell
 RUN python setup.py bdist_egg
-ENTRYPOINT ["spark-submit", "--master", "local", "--py-files", "dist/{$PACKAGE_FOLDER}-1.0.0-py3.7.egg", "{$PACKAGE_FOLDER}/m$
+ENTRYPOINT ["spark-submit"]
+CMD ["--master", "local", "--py-files", "dist/{$PACKAGE_FOLDER}-1.0.0-py3.7.egg", "{$PACKAGE_FOLDER}/main.py"]

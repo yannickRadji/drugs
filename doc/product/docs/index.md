@@ -26,8 +26,16 @@ The environment & dependencies mismatch are prevent by pipenv & docker.
 As the JSON file management json_cleaner is done in pure Python to ease its re-usability and enable its usage
 in parallel on several files it has been separated from the main Spark data_ingestion package.
 
-The data_ingestion package is based on several feature classes in order to enable the re-usability of those feature in
-some other Spark pipelines. It is able to run real world scenario where new data arriving by updating existing records 
+!!! note
+    The parts of the data_ingestion package that I saw as data engineering classics have been break down it several classes with only static methods additionally to the traditional Executor class 
+    in order to enable the re-usability of these classics some other Spark pipelines. What we think as classics are (for more detail go to the related page):
+    
+    - Files : Class that provide methods to interact with a bunch of delta tables/files
+    - Sanitizer : Enable to sanitize/clean dataframes
+    - Drugs Extractor : Give abilities to parse a dataframe with Drug's word to change its data model
+
+
+It is able to run real world scenario where new data arriving by updating existing records 
 inserting new ones. In the first place it reads json & csv input files with UTF8 encoding then union data with same name & columns.
 Data is read as string to enable parsing before type casting.
 Then its parse the remaining unicode string not parsed by encoder, clean the empty string by setting them a null/none cell.
@@ -43,7 +51,10 @@ Finally, we write the data in a JSON file to a format of a list of JSON with one
 
 ## Considerations
 If we have To of data we can't store the data in a unique JSON file depending on how we query the data we should then save
-it in parquet or in a graph database.
+it in delta parquet or in a graph database. If JSON is really mandatory we should use the partitioned multiline implementation.
+On To scale few code adaption to get rid of spark action that get all data to the driver (mainly the toPandas). 
+Finally, at scale we should consider doing incremental computation by only transforming the new data few codes adaption are needed 
+to do (Streaming Spark API could be leveraged).
 
 In case of large JSON input for json_cleaner we should leverage an iterative JSON parser (Python package like ijson)
 
@@ -57,8 +68,11 @@ we should create a drugs reference dataset that could source himself via API to 
 To be robust on matching drugs and scalable a search engine like elastic search could be leverage on drugs search in publication.
 
 The artifact folder shouldn't exist as the packages shouldn't be version, it exists only to ease the usage if you can't pull Docker images from my registry.
-```shell
-docker pull yannick.azurecr.io/drugs/full:latest
+```shell linenums="1"
+docker pull yannick.azurecr.io/drugs/dev:latest # Full dev environment
+docker pull yannick.azurecr.io/drugs/dataingestion:latest # Image to easily launch with parameters dataingestion package
+docker pull yannick.azurecr.io/drugs/jsoncleaner:latest # Image to easily launch with parameters jsoncleaner package
+docker pull yannick.azurecr.io/drugs/feature:latest # Image to easily launch with parameters feature package
 ```
 
 ## Results
