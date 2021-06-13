@@ -5,10 +5,10 @@ encoding = "utf-8"
 
 
 def create_logger_basic():
-    # TODO add logs sinking to Azure Monitor
+    # TODO add logs sinking to Azure Monitor (already
 
     # Get parameters for logger
-    log_level = "DEBUG"
+    log_level = "INFO"
     log_format = '%(asctime)s - %(filename)s - %(funcName)s() : %(message)s'
     log_dateformat = "%Y-%m-%d %H:%M:%S"
 

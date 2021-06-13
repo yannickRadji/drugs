@@ -1,0 +1,20 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "triggerblob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "bio/raw/{name}.json",
+      "connection": "datalaketestyr_STORAGE"
+    },
+    {
+      "name": "outputblob",
+      "type": "blob",
+      "dataType": "binary",
+      "path": "bio/func/{name}.json",
+      "connection": "datalaketestyr_STORAGE",
+      "direction": "out"
+    }
+  ]
+}

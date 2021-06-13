@@ -14,5 +14,5 @@ setup(
 
     author="Yannick Radji",
 
-    packages=["data_ingestion", "entities", "utils"],
+    packages=["json_cleaner", "feature", "data_ingestion", "entities", "utils"],
 )

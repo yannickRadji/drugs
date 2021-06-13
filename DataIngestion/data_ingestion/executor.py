@@ -50,7 +50,7 @@ class Executor(BaseExecute, Execute):
         Sanitizer.clean_strings(self.logger, df_dict)
         df_dict = Sanitizer.clean_date(self.logger, df_dict)
         df_dict = Sanitizer.empty_str_cleaning(self.logger, df_dict)
-        Sanitizer.deduplication(self.logger, df_dict, self.params.get("deduplication rules"))
+
         Files.merge_write(self.logger, df_dict, self.params.get("merge sanitized rules"),
                           path.join(output_path, "sanitized"), self.spark)
 

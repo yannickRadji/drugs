@@ -34,7 +34,7 @@ class Executor(BaseExecute, Execute):
             output_path: Folder path to write files
             on_adls: If the data are on the Azure Data Lake set true to use the correct package
 
-        Returns: Nothing the data are directly write at the desired location
+        Returns: List of data (also write at the desired location)
 
         """
         self.load_params(conf_path)

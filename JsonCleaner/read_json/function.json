@@ -1,0 +1,18 @@
+{
+  "scriptFile": "read_json.py",
+  "bindings": [
+    {
+      "name": "inputblob",
+      "type": "blob",
+      "dataType": "binary",
+      "direction": "in",
+      "path": "bio/raw/pubmed.json",
+      "connection": "datalaketestyr_STORAGE"
+    },
+    {
+      "name": "encoding",
+      "type": "activityTrigger",
+      "direction": "in"
+    }
+  ]
+}
